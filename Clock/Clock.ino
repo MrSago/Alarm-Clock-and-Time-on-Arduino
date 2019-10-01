@@ -1,6 +1,6 @@
 /************************************************************
 
-	Project name: Chasiki
+	Project name: Clock
 	Author: MrS4g0
 
 	Special for Nine Lashes
@@ -111,7 +111,7 @@ void SetDateMode();
 void SetAlarmMode();
 
 bool CheckButton(ButtonID id, unsigned int latency);
-bool TimeEqual(Time t1, Time t2);
+bool TimeEqual(Time* t1, Time* t2);
 void LcdClearLine(uint8_t line);
 void LcdPrintNum(int num);
 void PrintArrows();
@@ -158,7 +158,7 @@ void loop()
 
 			if (setTime && !setAlarm)
 			{
-				if (!TimeEqual(newTime, oldTime))
+				if (!TimeEqual(&newTime, &oldTime))
 				{
 					rtc.halt(false);
 					rtc.writeProtect(false);
@@ -191,7 +191,7 @@ void loop()
 
 			if (setAlarm)
 			{
-				if (!TimeEqual(alarmTime, newTime))
+				if (!TimeEqual(&alarmTime, &newTime))
 				{
 					alarmTime.hour = newTime.hour;
 					alarmTime.min = newTime.min;
@@ -281,7 +281,7 @@ void DefaultMode()
 
 		if (alarmOn)
 		{
-			if (TimeEqual(alarmTime, curTime))
+			if (TimeEqual(&alarmTime, &curTime))
 			{
 				alarmOn = false;
 				beepOn = true;
@@ -589,13 +589,13 @@ bool CheckButton(ButtonID id, unsigned int latency)
 //----------------------------------
 //-------Time equal function--------
 //----------------------------------
-bool TimeEqual(Time t1, Time t2)
+bool TimeEqual(Time* t1, Time* t2)
 {
-	if (t1.hour == t2.hour)
+	if (t1->hour == t2->hour)
 	{
-		if (t1.min == t2.min)
+		if (t1->min == t2->min)
 		{
-			if (t1.sec == t2.sec)
+			if (t1->sec == t2->sec)
 			{
 				return (true);
 			}
@@ -624,7 +624,9 @@ void LcdClearLine(uint8_t line)
 void LcdPrintNum(int num)
 {
 	if (num / 10 == 0)
+	{
 		lcd.print('0');
+	}
 	lcd.print(num);
 }
 
